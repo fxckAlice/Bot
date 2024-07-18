@@ -1,6 +1,8 @@
 CREATE DATABASE IF NOT EXISTS bot;
 USE bot;
 CREATE TABLE users(
-    id UUID PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     nickname TEXT NOT NULL,
-    password TEXT NOT NULL)
+    password TEXT NOT NULL);
+
+DROP TABLE IF EXISTS users

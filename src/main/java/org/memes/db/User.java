@@ -2,13 +2,12 @@ package org.memes.db;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.UUID;
 
 public class User {
-    private long chatID;
+    private Long chatID;
     private String nick;
-    private String email;
     private String password;
+    private boolean isSingedIn;
     private static String getMD5Hash(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -28,7 +27,7 @@ public class User {
         }
     }
 
-    public long getChatID() {
+    public Long getChatID() {
         return chatID;
     }
 
@@ -36,18 +35,22 @@ public class User {
         return nick;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public String getPassword() {
         return password;
     }
 
-    public User(long chatID, String nick, String email, String password) {
+    public boolean isSingedIn() {
+        return isSingedIn;
+    }
+
+    public void setSingedIn(boolean singedIn) {
+        isSingedIn = singedIn;
+    }
+
+    public User(long chatID, String nick, String password) {
         this.chatID = chatID;
         this.nick = nick;
-        this.email = email;
         this.password = password;
+        this.isSingedIn = true;
     }
 }
