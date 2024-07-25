@@ -28,7 +28,7 @@ public class UserDao {
                 statement.setString(1, id.toString());
                 try(ResultSet resultSet = statement.executeQuery()){
                     if(resultSet.next()){
-                        return new User(resultSet.getLong("id"), resultSet.getString("nickname"), resultSet.getString("password"));
+                        return new User(resultSet.getLong("id"), resultSet.getString("nickname"), resultSet.getString("password"), resultSet.getBoolean("isStarted"));
                     }
                 }
             }
@@ -39,14 +39,14 @@ public class UserDao {
         }
         return null;
     }
-    public User getUserBiNickname(String nickname){
+    public User getUserByNickname(String nickname){
         try(Connection connection = dataSource.getConnection()){
             String byNickQuery = "SELECT * FROM users WHERE nickname = ?";
             try(PreparedStatement statement = connection.prepareStatement(byNickQuery)){
                 statement.setString(1, nickname);
                 try(ResultSet resultSet = statement.executeQuery()){
                     if(resultSet.next()){
-                        return new User(resultSet.getLong("id"), resultSet.getString("nickname"), resultSet.getString("password"));
+                        return new User(resultSet.getLong("id"), resultSet.getString("nickname"), resultSet.getString("password"), resultSet.getBoolean("isStarted"));
                     }
                 }
             }
@@ -59,11 +59,12 @@ public class UserDao {
     }
     public void createNewUser(User newUser){
         try(Connection connection = dataSource.getConnection()){
-            String createQuery = "INSERT INTO users (id, nickname, password) VALUES (?, ?, ?)";
+            String createQuery = "INSERT INTO users (id, nickname, password, isStarted) VALUES (?, ?, ?, ?)";
             try(PreparedStatement statement = connection.prepareStatement(createQuery)){
                 statement.setString(1, newUser.getChatID().toString());
                 statement.setString(2, newUser.getNick());
                 statement.setString(3, newUser.getPassword());
+                statement.setString(4, newUser.isStarted().toString());
 
                 statement.executeUpdate();
             }
@@ -111,5 +112,6 @@ public class UserDao {
             return false;
         }
     }
+
 }
 

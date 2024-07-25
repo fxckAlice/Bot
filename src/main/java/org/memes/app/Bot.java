@@ -7,8 +7,8 @@ import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
 
 
 public class Bot {
-    private final String token = BotContext.getToken();
     private final UserDao dao = UserDao.getDao();
+    private final String token = BotContext.getToken();
 
     public Bot(){
         try(TelegramBotsLongPollingApplication botApp = new TelegramBotsLongPollingApplication()) {

@@ -3,6 +3,7 @@ USE bot;
 CREATE TABLE users(
     id BIGINT PRIMARY KEY,
     nickname TEXT NOT NULL,
-    password TEXT NOT NULL);
+    password TEXT NOT NULL,
+    isStarted BOOLEAN NOT NULL );
 
 DROP TABLE IF EXISTS users
