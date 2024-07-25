@@ -28,7 +28,7 @@ public class UserDao {
                 statement.setString(1, id.toString());
                 try(ResultSet resultSet = statement.executeQuery()){
                     if(resultSet.next()){
-                        return new User(resultSet.getLong("id"), resultSet.getString("nickname"), resultSet.getString("password"));
+                        return new User(resultSet.getLong("id"), resultSet.getString("nickname"));
                     }
                 }
             }
@@ -46,7 +46,7 @@ public class UserDao {
                 statement.setString(1, nickname);
                 try(ResultSet resultSet = statement.executeQuery()){
                     if(resultSet.next()){
-                        return new User(resultSet.getLong("id"), resultSet.getString("nickname"), resultSet.getString("password"));
+                        return new User(resultSet.getLong("id"), resultSet.getString("nickname"));
                     }
                 }
             }
@@ -63,7 +63,6 @@ public class UserDao {
             try(PreparedStatement statement = connection.prepareStatement(createQuery)){
                 statement.setString(1, newUser.getChatID().toString());
                 statement.setString(2, newUser.getNick());
-                statement.setString(3, newUser.getPassword());
 
                 statement.executeUpdate();
             }
@@ -93,6 +92,7 @@ public class UserDao {
             return false;
         }
     }
+
     public Boolean ifUniqueByNickname(String nick){
         try(Connection connection = dataSource.getConnection()){
             String ifUniqueQuery = "SELECT EXISTS(SELECT 1 FROM users WHERE nickname = ?)";

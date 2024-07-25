@@ -2,7 +2,13 @@ CREATE DATABASE IF NOT EXISTS bot;
 USE bot;
 CREATE TABLE users(
     id BIGINT PRIMARY KEY,
-    nickname TEXT NOT NULL,
-    password TEXT NOT NULL);
+    nickname TEXT NOT NULL);
 
-DROP TABLE IF EXISTS users
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE usersChats(
+    id UUID PRIMARY KEY ,
+    userId BIGINT NOT NULL ,
+    chatId BIGINT NOT NULL ,
+    FOREIGN KEY (userId) REFERENCES users(id)
+);
