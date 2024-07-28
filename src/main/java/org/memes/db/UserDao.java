@@ -8,7 +8,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
+import java.util.ArrayList;
 
 
 public class UserDao {
@@ -59,10 +59,15 @@ public class UserDao {
     }
     public void createNewUser(User newUser){
         try(Connection connection = dataSource.getConnection()){
-            String createQuery = "INSERT INTO users (id, nickname, password) VALUES (?, ?, ?)";
+            String createQuery = "INSERT INTO users (id, nickname, started, ifNicknameRequired, ifListenerRequired, ifRmListenerRequired, ifStreamOpened) VALUES (?, ?, ?, ?, ?, ?, ?)";
             try(PreparedStatement statement = connection.prepareStatement(createQuery)){
                 statement.setString(1, newUser.getChatID().toString());
                 statement.setString(2, newUser.getNick());
+                statement.setString(3, newUser.isStarted().toString());
+                statement.setString(4, newUser.isIfNicknameRequired().toString());
+                statement.setString(5, newUser.isIfListenerRequired().toString());
+                statement.setString(6, newUser.isIfRmListenerRequired().toString());
+                statement.setString(7, newUser.isIfStreamOpened().toString());
 
                 statement.executeUpdate();
             }
@@ -109,6 +114,25 @@ public class UserDao {
         catch (SQLException e){
             e.printStackTrace();
             return false;
+        }
+    }
+    public ArrayList<Long> getListenersListById(Long id){
+        try (Connection connection = dataSource.getConnection()) {
+            String getArrQuery = "SELECT * FROM usersChats WHERE userId = ?";
+            try(PreparedStatement statement = connection.prepareStatement(getArrQuery)){
+                statement.setString(1, id.toString());
+                try(ResultSet result = statement.executeQuery()){
+                    ArrayList<Long> ans = new ArrayList<>();
+                    while(result.next()){
+                        ans.add(result.getLong("chatId"));
+                    }
+                    return ans;
+                }
+            }
+        }
+        catch (SQLException e){
+            System.out.println("DB GET was failed!");
+            return null;
         }
     }
 }

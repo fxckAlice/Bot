@@ -1,21 +1,17 @@
 package org.memes.db;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class User {
-    private boolean isSingedIn;
-    private boolean nothingRequired;
-    private boolean ifNicknameRequired;
-    private boolean ifPhotoRequired;
-    private boolean ifListenerRequired;
-    private boolean ifRmListenerRequired;
-    private boolean ifSteamOpened;
-    private boolean started;
-    private Long chatID;
+    private Boolean isSingedIn;
+    private Boolean nothingRequired;
+    private Boolean ifNicknameRequired;
+    private Boolean ifListenerRequired;
+    private Boolean ifRmListenerRequired;
+    private Boolean ifStreamOpened;
+    private Boolean started;
+    private final Long chatID;
     private String nick;
-    private String password;
 
     public User(Long chatID, String nick, Boolean started) {
         this.chatID = chatID;
@@ -24,31 +20,28 @@ public class User {
     }
 
 
-    public boolean isIfListenerRequired() {
+    public Boolean isIfListenerRequired() {
         return ifListenerRequired;
     }
 
-    public boolean isNothingRequired() {
+    public Boolean isNothingRequired() {
         return nothingRequired;
     }
 
-    public boolean isIfNicknameRequired() {
+    public Boolean isIfNicknameRequired() {
         return ifNicknameRequired;
     }
 
-    public boolean isIfPhotoRequired() {
-        return ifPhotoRequired;
-    }
-    public boolean isIfRmListenerRequired() {
+    public Boolean isIfRmListenerRequired() {
         return ifRmListenerRequired;
     }
 
-    public void setIfSteamOpened(boolean ifSteamOpened) {
-        this.ifSteamOpened = ifSteamOpened;
+    public void setIfStreamOpened(boolean ifStreamOpened) {
+        this.ifStreamOpened = ifStreamOpened;
     }
 
-    public boolean isIfSteamOpened() {
-        return ifSteamOpened;
+    public Boolean isIfStreamOpened() {
+        return ifStreamOpened;
     }
 
     public Boolean isStarted() {
@@ -66,9 +59,6 @@ public class User {
         return nick;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
     public boolean isSingedIn() {
         return isSingedIn;
@@ -92,18 +82,22 @@ public class User {
         this.chatID = chatID;
         if(newUser != null) {
             this.nick = newUser.getNick();
-            this.password = newUser.getPassword();
             this.started = newUser.isStarted();
-            this.isSingedIn = true;
+            this.ifNicknameRequired = newUser.isIfNicknameRequired();
+            this.ifListenerRequired = newUser.isIfListenerRequired();
+            this.ifRmListenerRequired = newUser.isIfRmListenerRequired();
+            this.isSingedIn = newUser.getNick() != null;
+            this.chatsId = UserDao.getDao().getListenersListById(chatID);
         }
         else{
+            newSession();
             this.isSingedIn = false;
-            this.started = true;
+            //TODO: POst new User
         }
     }
 
     public void ifNothingRequired() {
-        if(!ifNicknameRequired && !ifPhotoRequired && !ifListenerRequired && !ifRmListenerRequired) {
+        if(!ifNicknameRequired && !ifListenerRequired && !ifRmListenerRequired) {
             this.nothingRequired = true;
         }
         else{
@@ -130,12 +124,11 @@ public class User {
         this.ifNicknameRequired = ifNicknameRequired;
     }
 
-    public void setIfPhotoRequired(boolean ifPhotoRequired) {
-        if(ifPhotoRequired) {
-            this.nothingRequired = false;
-        }
-        this.ifPhotoRequired = ifPhotoRequired;
+    public void setNick(String nick) {
+        this.nick = nick;
     }
+
+
 
     public void setStarted(boolean started) {
         this.started = started;
@@ -147,10 +140,9 @@ public class User {
     }
     public void newSession(){
         this.setIfNicknameRequired(false);
-        this.setIfPhotoRequired(false);
         this.setIfListenerRequired(false);
         this.setIfRmListenerRequired(false);
-        this.setIfSteamOpened(false);
+        this.setIfStreamOpened(false);
         this.setStarted(true);
         this.ifNothingRequired();
     }

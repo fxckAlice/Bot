@@ -4,16 +4,11 @@ import org.memes.db.User;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.util.LongPollingSingleThreadUpdateConsumer;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
-import org.telegram.telegrambots.meta.api.objects.PhotoSize;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
 
@@ -45,7 +40,7 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
             }
             if(message.equals("/setNickname")){
                 String setNicknameMessage;
-                if(user.isNothingRequired() && user.getNick() == null){
+                if(user.isNothingRequired() && user.getNick() == null && user.isStarted()){
                     setNicknameMessage = "Choose your nickname!";
                     user.setIfNicknameRequired(true);
                 }
@@ -53,8 +48,11 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
                     if(user.getNick() != null){
                         setNicknameMessage = "Nickname already taken!";
                     }
-                    else{
+                    else if(!user.isNothingRequired()){
                         setNicknameMessage = "Finish previous action!";
+                    }
+                    else{
+                        setNicknameMessage = "Start your session before any action!";
                     }
                 }
                 SendMessage sendErrMessage = SendMessage
@@ -71,7 +69,7 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
             }
             if(message.equals("/addListener")){
                 String addListenerMessage;
-                if(user.isNothingRequired() && user.isSingedIn()){
+                if(user.isNothingRequired() && user.isSingedIn() && user.isStarted()){
                     addListenerMessage = "Enter nickname of your new listener!";
                     user.setIfListenerRequired(true);
                 }
@@ -79,8 +77,11 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
                     if(!user.isSingedIn()){
                         addListenerMessage = "Please set a nickname!";
                     }
-                    else{
+                    else if(!user.isNothingRequired()){
                         addListenerMessage = "Finish previous action!";
+                    }
+                    else{
+                        addListenerMessage = "Start your session before any action!";
                     }
                 }
                 SendMessage sendMessage = SendMessage
@@ -97,7 +98,7 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
             }
             if(message.equals("/removeListener")){
                 String removeListenerMessage;
-                if(user.isNothingRequired() && user.isSingedIn()){
+                if(user.isNothingRequired() && user.isSingedIn() && user.isStarted()){
                     ArrayList<Long> arr = user.getChatsId();
                     if(arr.size() > 0){
                         removeListenerMessage = "Your listeners list: ";
@@ -114,8 +115,11 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
                     if(!user.isSingedIn()){
                         removeListenerMessage = "Please set a nickname!";
                     }
-                    else{
+                    else if(!user.isNothingRequired()){
                         removeListenerMessage = "Finish previous action!";
+                    }
+                    else{
+                        removeListenerMessage = "Start your session before any action!";
                     }
                 }
                 SendMessage sendMessage = SendMessage
@@ -132,8 +136,8 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
             }
             if(message.equals("/startStream")){
                 String startStreamMessage;
-                if(user.isNothingRequired() && user.isSingedIn() && user.isStarted() && !user.isIfSteamOpened()){
-                    user.setIfSteamOpened(true);
+                if(user.isNothingRequired() && user.isSingedIn() && user.isStarted() && !user.isIfStreamOpened()){
+                    user.setIfStreamOpened(true);
                     startStreamMessage = "Streaming started!";
                 }
                 else{
@@ -141,7 +145,7 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
                         startStreamMessage = "Please set a nickname!";
                     } else if (!user.isNothingRequired()) {
                         startStreamMessage = "Finish previous action!";
-                    } else if (user.isIfSteamOpened()) {
+                    } else if (user.isIfStreamOpened()) {
                         startStreamMessage = "Steam`s already opened!";
 
                     } else{
@@ -162,8 +166,8 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
             }
             if(message.equals("/stopStream")){
                 String stopStreamMessage;
-                if(user.isNothingRequired() && user.isSingedIn() && user.isStarted() && user.isIfSteamOpened()){
-                    user.setIfSteamOpened(false);
+                if(user.isNothingRequired() && user.isSingedIn() && user.isStarted() && user.isIfStreamOpened()){
+                    user.setIfStreamOpened(false);
                     stopStreamMessage = "Streaming stopped!";
                 }
                 else{
@@ -171,7 +175,7 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
                         stopStreamMessage = "Please set a nickname!";
                     } else if (!user.isNothingRequired()) {
                         stopStreamMessage = "Finish previous action!";
-                    } else if (!user.isIfSteamOpened()) {
+                    } else if (!user.isIfStreamOpened()) {
                         stopStreamMessage = "Steam`s already stop!";
 
                     } else{
@@ -193,6 +197,9 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
             if(message.equals("/stop")){
                 user.newSession();
                 user.setStarted(false);
+            }
+            if(user.isIfNicknameRequired()){
+
             }
         }
 
