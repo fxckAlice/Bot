@@ -100,7 +100,7 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
                 String removeListenerMessage;
                 if(user.isNothingRequired() && user.isSingedIn() && user.isStarted()){
                     ArrayList<Long> arr = user.getChatsId();
-                    if(arr.size() > 0){
+                    if(!arr.isEmpty()){
                         removeListenerMessage = "Your listeners list: ";
                         for(Long l : arr){
                             removeListenerMessage += new User(l).getNick() + "  ";

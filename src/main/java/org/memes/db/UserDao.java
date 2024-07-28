@@ -39,7 +39,7 @@ public class UserDao {
         }
         return null;
     }
-    public User getUserBiNickname(String nickname){
+    public User getUserByNickname(String nickname){
         try(Connection connection = dataSource.getConnection()){
             String byNickQuery = "SELECT * FROM users WHERE nickname = ?";
             try(PreparedStatement statement = connection.prepareStatement(byNickQuery)){
@@ -133,6 +133,17 @@ public class UserDao {
         catch (SQLException e){
             System.out.println("DB GET was failed!");
             return null;
+        }
+    }
+    public void updateInfoFromUsers(User user){
+        try (Connection connection = dataSource.getConnection()){
+            String updateQuery = "UPDATE users SET ";
+            try (PreparedStatement statement = connection.prepareStatement(updateQuery)){
+
+            }
+        }
+        catch (SQLException e){
+            System.out.println("DB UPDATE was failed!");
         }
     }
 }
