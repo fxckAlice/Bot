@@ -59,15 +59,14 @@ public class UserDao {
     }
     public void createNewUser(User newUser){
         try(Connection connection = dataSource.getConnection()){
-            String createQuery = "INSERT INTO users (id, nickname, started, ifNicknameRequired, ifListenerRequired, ifRmListenerRequired, ifStreamOpened) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String createQuery = "INSERT INTO users (id, started, ifNicknameRequired, ifListenerRequired, ifRmListenerRequired, ifStreamOpened) VALUES (?, ?, ?, ?, ?, ?)";
             try(PreparedStatement statement = connection.prepareStatement(createQuery)){
                 statement.setString(1, newUser.getChatID().toString());
-                statement.setString(2, newUser.getNick());
-                statement.setString(3, newUser.isStarted().toString());
-                statement.setString(4, newUser.isIfNicknameRequired().toString());
-                statement.setString(5, newUser.isIfListenerRequired().toString());
-                statement.setString(6, newUser.isIfRmListenerRequired().toString());
-                statement.setString(7, newUser.isIfStreamOpened().toString());
+                statement.setString(2, newUser.isStarted().toString());
+                statement.setString(3, newUser.isIfNicknameRequired().toString());
+                statement.setString(4, newUser.isIfListenerRequired().toString());
+                statement.setString(5, newUser.isIfRmListenerRequired().toString());
+                statement.setString(6, newUser.isIfStreamOpened().toString());
 
                 statement.executeUpdate();
             }
@@ -137,13 +136,34 @@ public class UserDao {
     }
     public void updateInfoFromUsers(User user){
         try (Connection connection = dataSource.getConnection()){
-            String updateQuery = "UPDATE users SET ";
+            String updateQuery = "UPDATE users SET nickname = ?, started = ?, ifNicknameRequired = ?, ifListenerRequired = ?, ifRmListenerRequired = ?, ifStreamOpened = ? WHERE id = ?";
             try (PreparedStatement statement = connection.prepareStatement(updateQuery)){
-
+                statement.setString(1, user.getNick());
+                statement.setBoolean(2, user.isStarted());
+                statement.setBoolean(3, user.isIfNicknameRequired());
+                statement.setBoolean(4, user.isIfListenerRequired());
+                statement.setBoolean(5, user.isIfRmListenerRequired());
+                statement.setBoolean(6, user.isIfStreamOpened());
+                statement.setLong(7, user.getChatID());
+                statement.execute();
             }
         }
         catch (SQLException e){
             System.out.println("DB UPDATE was failed!");
+            e.printStackTrace();
+        }
+    }
+    public void deleteListenerByChatId(Long userId, Long chatId){
+        try (Connection connection = dataSource.getConnection()){
+            String deleteQuery = "DELETE FROM usersChats WHERE userId = ? AND chatId = ?";
+            try (PreparedStatement statement = connection.prepareStatement(deleteQuery)){
+                statement.setLong(1, userId);
+                statement.setLong(2, chatId);
+                statement.execute();
+            }
+        } catch (SQLException e){
+            System.out.println("DB DELETE was failed!");
+            e.printStackTrace();
         }
     }
 }
