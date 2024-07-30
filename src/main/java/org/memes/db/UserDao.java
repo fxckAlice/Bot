@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 public class UserDao {
@@ -164,6 +165,39 @@ public class UserDao {
         } catch (SQLException e){
             System.out.println("DB DELETE was failed!");
             e.printStackTrace();
+        }
+    }
+    public void createListener(Long userId, Long chatId){
+        try (Connection connection = dataSource.getConnection()){
+            String createQuery = "INSERT INTO userChats (id, userId, chatId) VALUES (?, ?, ?)";
+            try (PreparedStatement statement = connection.prepareStatement(createQuery)){
+                statement.setString(1, UUID.randomUUID().toString());
+                statement.setLong(2, userId);
+                statement.setLong(3, chatId);
+                statement.execute();
+            }
+        } catch (SQLException e){
+            System.out.println("DB CREATE was failed!");
+            e.printStackTrace();
+        }
+    }
+    public ArrayList<Long> getAllListenersById(Long userId){
+        try (Connection connection = dataSource.getConnection()){
+            String getQuery = "SELECT * FROM usersChats WHERE userId = ?";
+            try (PreparedStatement statement = connection.prepareStatement(getQuery)){
+                statement.setLong(1, userId);
+                try (ResultSet result = statement.executeQuery()){
+                    ArrayList<Long> ans = new ArrayList<>();
+                    while (result.next()){
+                        ans.add(result.getLong("chatId"));
+                    }
+                    return ans;
+                }
+            }
+        } catch (SQLException e){
+            System.out.println("DB GET was failed");
+            e.printStackTrace();
+            return null;
         }
     }
 }
