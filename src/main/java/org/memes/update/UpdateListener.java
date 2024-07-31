@@ -199,7 +199,7 @@ public class UpdateListener implements LongPollingSingleThreadUpdateConsumer {
                 user.setStarted(false);
             }
             if(user.isIfNicknameRequired()){
-
+                user.setNick(message);
             }
         }
 

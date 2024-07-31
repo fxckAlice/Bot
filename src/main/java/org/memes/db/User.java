@@ -81,18 +81,23 @@ public class User {
         User newUser = UserDao.getDao().getUserById(chatID);
         this.chatID = chatID;
         if(newUser != null) {
-            this.nick = newUser.getNick();
             this.started = newUser.isStarted();
             this.ifNicknameRequired = newUser.isIfNicknameRequired();
             this.ifListenerRequired = newUser.isIfListenerRequired();
             this.ifRmListenerRequired = newUser.isIfRmListenerRequired();
-            this.isSingedIn = newUser.getNick() != null;
             this.chatsId = UserDao.getDao().getListenersListById(chatID);
+            if(newUser.nick == null){
+                this.isSingedIn = false;
+            }
+            else{
+                this.isSingedIn = true;
+                this.nick = newUser.getNick();
+            }
         }
         else{
             newSession();
             this.isSingedIn = false;
-            //TODO: POst new User
+            UserDao.getDao().createNewUser(this);
         }
     }
 
