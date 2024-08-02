@@ -23,6 +23,7 @@ public class UserDao {
     }
     private UserDao(){}
     public User getUserById(Long id){
+        //TODO: boolean -> int FUCKING MARIA DB DEVELOPERS
         try(Connection connection = dataSource.getConnection()){
             String byIdQuery = "SELECT * FROM users WHERE id = ?";
             try(PreparedStatement statement = connection.prepareStatement(byIdQuery)){
